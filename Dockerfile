@@ -6,7 +6,9 @@ WORKDIR /app
 COPY eth_tool.rb .
 COPY eth_tool_api.rb .
 
-ENV ETH_RPC_URL=http://geth:8545
+# ENV ETH_RPC_URL=http://geth:8545
+ENV ETH_RPC_URL=https://dry-wispy-gas.quiknode.pro/
+
 ENV KEYSTORE_DIR=/app/keystores
 
 RUN mkdir -p /app/keystores
