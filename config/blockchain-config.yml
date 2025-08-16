@@ -1,0 +1,56 @@
+# /opt/opendax/config/blockchain-config.yml
+chains:
+  ethereum:
+    chain_id: 1
+    currency_code: "eth"
+    quicknode_url: "https://eth-mainnet.quiknode.pro/your-key/"
+    gas_limit: 21000
+    min_gas_price: 1000000000  # 1 Gwei
+    confirmations_required: 12
+    hot_wallet_address: "0x..."
+    collection_threshold: "0.01"  # ETH
+    
+  polygon:
+    chain_id: 137
+    currency_code: "matic"
+    quicknode_url: "https://polygon-mainnet.quiknode.pro/your-key/"
+    gas_limit: 21000
+    min_gas_price: 30000000000  # 30 Gwei
+    confirmations_required: 20
+    hot_wallet_address: "0x..."
+    collection_threshold: "1.0"   # MATIC
+    
+  bsc:
+    chain_id: 56
+    currency_code: "bnb"
+    quicknode_url: "https://bsc-mainnet.quiknode.pro/your-key/"
+    gas_limit: 21000
+    min_gas_price: 5000000000   # 5 Gwei
+    confirmations_required: 15
+    hot_wallet_address: "0x..."
+    collection_threshold: "0.01"  # BNB
+    
+  arbitrum:
+    chain_id: 42161
+    currency_code: "arb"
+    quicknode_url: "https://arb-mainnet.quiknode.pro/your-key/"
+    gas_limit: 21000
+    min_gas_price: 100000000    # 0.1 Gwei
+    confirmations_required: 5
+    hot_wallet_address: "0x..."
+    collection_threshold: "10.0"  # ARB
+
+# Global settings
+global:
+  wallet_directory: "/opt/peatio/wallets"
+  rpc_port: 8545
+  log_level: "info"
+  vault:
+    endpoint: "https://vault.coinport.internal:8200"
+    transit_key: "coinport-wallet-encryption"
+  database:
+    host: "mysql.coinport.internal"
+    database: "peatio_production"
+    username: "peatio"
+    # password loaded from environment
+
