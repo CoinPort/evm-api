@@ -19,6 +19,13 @@ def rpc_call(method, params = [])
   JSON.parse(response.body)['result']
 end
 
+def rpc_call_eth(method, params = [])
+  uri = URI('https://dry-wispy-gas.quiknode.pro')
+  body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
+  response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
+  JSON.parse(response.body)['result']
+end
+
 def create_account(password)
   raise ArgumentError, "Password cannot be empty" if password.nil? || password.empty?
 
@@ -47,8 +54,8 @@ def send_transaction(address, password, to, amount_eth)
     raise "Failed to load keystore: #{e.message}"
   end
 
-  nonce = rpc_call('eth_getTransactionCount', [key.address, 'pending']).to_i(16)
-  gas_price = rpc_call('eth_gasPrice').to_i(16)
+  nonce = rpc_call_eth('eth_getTransactionCount', [key.address, 'pending']).to_i(16)
+  gas_price = rpc_call_eth('eth_gasPrice').to_i(16)
 
   tx = Eth::Tx.new(
     nonce: nonce,
@@ -65,7 +72,7 @@ def send_transaction(address, password, to, amount_eth)
   end
 
   raw_tx = '0x' + RLP.encode(tx).unpack1('H*')
-  tx_hash = rpc_call('eth_sendRawTransaction', [raw_tx])
+  tx_hash = rpc_call_eth('eth_sendRawTransaction', [raw_tx])
 
   unless tx_hash.is_a?(String) && tx_hash.match?(/^0x([A-Fa-f0-9]{64})$/)
     raise "Invalid transaction hash format: #{tx_hash.inspect}"
