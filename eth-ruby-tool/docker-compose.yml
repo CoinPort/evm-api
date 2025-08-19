@@ -1,0 +1,17 @@
+eth-tool:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eth_tool
+    environment:
+      ETH_RPC_URL: http://geth:8545
+      KEYSTORE_DIR: /app/keystores
+    volumes:
+      - ./keystores:/app/keystores
+    networks:
+      - ethnet
+    entrypoint: ["sleep", "infinity"]
+
+networks:
+  ethnet:
+    driver: bridge
