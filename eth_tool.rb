@@ -7,19 +7,24 @@ KEYSTORE_DIR = ENV['KEYSTORE_DIR'] || File.join(__dir__, 'keystores')
 FileUtils.mkdir_p(KEYSTORE_DIR) unless Dir.exist?(KEYSTORE_DIR)
 
 def get_utc_filename(address)
+  puts 'pmc - get_utc_filename'
   now = Time.now.utc
   iso = now.iso8601.gsub(':', '-')
   "UTC--#{iso}--#{address.downcase}"
 end
 
 def rpc_call(method, params = [])
-  uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
+  puts 'pmc - rpc_call'
+  uri = URI(ENV['ETH_RPC_URL'] || 'https://dry-wispy-gas.quiknode.pro')
+# pmc uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
+
   body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
   response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
   JSON.parse(response.body)['result']
 end
 
 def rpc_call_eth(method, params = [])
+  puts 'pmc - rpc_call_eth'
   uri = URI('https://dry-wispy-gas.quiknode.pro')
   body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
   response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
@@ -27,6 +32,7 @@ def rpc_call_eth(method, params = [])
 end
 
 def create_account(password)
+  puts 'pmc - create_account'
   raise ArgumentError, "Password cannot be empty" if password.nil? || password.empty?
 
   key = Eth::Key.new
@@ -39,6 +45,7 @@ def create_account(password)
 end
 
 def send_transaction(address, password, to, amount_eth)
+  puts 'pmc - send_transaction'
   raise ArgumentError, "Invalid recipient address" unless to.match?(/^0x[a-fA-F0-9]{40}$/)
   raise ArgumentError, "Invalid amount" unless amount_eth.to_s.match?(/^\d+(\.\d+)?$/) && amount_eth.to_f > 0
 
