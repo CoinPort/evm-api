@@ -13,5 +13,5 @@ ENV KEYSTORE_DIR=/app/keystores
 
 RUN mkdir -p /app/keystores
 
-EXPOSE 3000
+EXPOSE 8545
 ENTRYPOINT ["ruby", "/app/eth_tool_api.rb"]
