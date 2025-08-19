@@ -3,7 +3,7 @@ require 'rack/contrib'
 require_relative './eth_tool'
 
 set :bind, '0.0.0.0'
-set :port, ENV.fetch('PORT', 3000)
+set :port, ENV.fetch('PORT', 8545)
 use Rack::JSONBodyParser
 
 post '/create_account' do
