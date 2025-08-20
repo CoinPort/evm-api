@@ -4,11 +4,13 @@ require_relative './eth_tool'
 
 set :bind, '0.0.0.0'
 
-puts 'pmc - Starting Ethereum Tool API...'
+puts '.'
+puts 'Starting Ethereum API...'
 
 set :port, ENV.fetch('PORT', 3000)
 
-puts "pmc - Listening on port: #{settings.port}"
+puts "Listening on port: #{settings.port}"
+puts '.'
 
 #set :port, ENV.fetch('PORT', 8545)
 
@@ -33,7 +35,7 @@ post '/send_transaction' do
 
   address = params['address']
 
-  puts 'pmc - /send_transaction address: #{address}'
+  puts '/send_transaction address: #{address}'
 
   password = params['password']
   to = params['to']
