@@ -8,6 +8,8 @@ puts 'pmc - Starting Ethereum Tool API...'
 
 set :port, ENV.fetch('PORT', 3000)
 
+puts "pmc - Listening on port: #{settings.port}"
+
 #set :port, ENV.fetch('PORT', 8545)
 
 use Rack::JSONBodyParser
@@ -26,8 +28,13 @@ post '/create_account' do
 end
 
 post '/send_transaction' do
+  
   puts 'pmc - /send_transaction'
+
   address = params['address']
+
+  puts 'pmc - /send_transaction address: #{address}'
+
   password = params['password']
   to = params['to']
   amount = params['value']

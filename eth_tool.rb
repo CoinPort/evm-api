@@ -4,7 +4,12 @@ require 'json'
 require 'time'
 
 KEYSTORE_DIR = ENV['KEYSTORE_DIR'] || File.join(__dir__, 'keystores')
+
+puts "pmc - Using KEYSTORE_DIR: #{KEYSTORE_DIR}"
+
 FileUtils.mkdir_p(KEYSTORE_DIR) unless Dir.exist?(KEYSTORE_DIR)
+
+puts "pmc - Using ETH_RPC_URL: #{ETH_RPC_URL}"
 
 def get_utc_filename(address)
   puts 'pmc - get_utc_filename'
@@ -14,9 +19,10 @@ def get_utc_filename(address)
 end
 
 def rpc_call(method, params = [])
-  puts 'pmc - rpc_call'
   uri = URI(ENV['ETH_RPC_URL'] || 'https://dry-wispy-gas.quiknode.pro')
-# pmc uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
+  # pmc uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
+
+  puts 'pmc - rpc_call: #{uri}'
 
   body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
   response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
