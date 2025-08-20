@@ -62,11 +62,7 @@ def rpc_call(method, params = [])
 end
 
 def rpc_call_eth(method, params = [])
-  puts 'pmc - rpc_call_eth'
-  uri = CONFIG[:quicknode_url]
-  body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
-  response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
-  JSON.parse(response.body)['result']
+  rpc_call(method, params)
 end
 
 def create_account(password)
