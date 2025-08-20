@@ -23,7 +23,6 @@ def load_config
     min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
   }
 
-
 end
 
 # Load configuration once at startup
