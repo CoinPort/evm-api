@@ -75,6 +75,7 @@ def send_transaction(address, password, to, amount_eth)
   begin
     tx.sign(key)
   rescue StandardError => e
+    puts "pmc - Failed to sign transaction: #{e.message}"
     raise "Failed to sign transaction: #{e.message}"
   end
 
@@ -84,7 +85,7 @@ def send_transaction(address, password, to, amount_eth)
   unless tx_hash.is_a?(String) && tx_hash.match?(/^0x([A-Fa-f0-9]{64})$/)
     raise "Invalid transaction hash format: #{tx_hash.inspect}"
   end
-  puts tx_hash
+  puts "Transaction hash: #{tx_hash}"
 
   tx_hash
 end

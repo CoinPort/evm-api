@@ -3,10 +3,11 @@ require 'rack/contrib'
 require_relative './eth_tool'
 
 set :bind, '0.0.0.0'
-set :port, ENV.fetch('PORT', 8545)
+set :port, ENV.fetch('PORT', 3000)
 use Rack::JSONBodyParser
 
 post '/create_account' do
+  puts 'pmc - create_account endpoint called'
   password = params['password']
   return [400, { error: 'Missing password' }.to_json] unless password
 
@@ -19,6 +20,7 @@ post '/create_account' do
 end
 
 post '/send_transaction' do
+  puts 'pmc - send_transaction endpoint called'
   address = params['address']
   password = params['password']
   to = params['to']
