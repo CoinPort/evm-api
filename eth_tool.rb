@@ -3,13 +3,43 @@ require 'fileutils'
 require 'json'
 require 'time'
 
-KEYSTORE_DIR = ENV['KEYSTORE_DIR'] || File.join(__dir__, 'keystores')
+# Load configuration from YAML file or environment variables
+def load_config
+  config_file = '/opt/config/config.yml'
+  
+  if File.exist?(config_file)
+    config = YAML.load_file(config_file)
+    puts "Loaded config from #{config_file}"
+  else
+    config = {}
+    puts "No config file found, using environment variables"
+  end
+  
+  # Environment variables override config file values
+  {
+    quicknode_url: ENV['ETH_RPC_URL'] || config['quicknode_url'] || 'https://dry-wispy-gas.quiknode.pro',
+    chain_id: ENV['CHAIN_ID']&.to_i || config['chain_id'] || 1,
+    gas_limit: ENV['GAS_LIMIT']&.to_i || config['gas_limit'] || 21000,
+    min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
+    min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
+  }
 
-puts "pmc - Using KEYSTORE_DIR: #{KEYSTORE_DIR}"
+
+end
+
+# Load configuration once at startup
+CONFIG = load_config
+
+KEYSTORE_DIR = ENV['KEYSTORE_DIR'] || File.join(__dir__, 'keystores')
 
 FileUtils.mkdir_p(KEYSTORE_DIR) unless Dir.exist?(KEYSTORE_DIR)
 
-puts "pmc - Using ETH_RPC_URL: #{ETH_RPC_URL}"
+puts "Using KEYSTORE_DIR: #{KEYSTORE_DIR}"
+puts "Using QuickNode URL: #{CONFIG[:quicknode_url]}"
+puts "Using Chain ID: #{CONFIG[:chain_id]}"
+puts "Using Gas Limit: #{CONFIG[:gas_limit]}"
+puts "Using Min Gas Price: #{CONFIG[:min_gas_price]}"
+
 
 def get_utc_filename(address)
   puts 'pmc - get_utc_filename'
@@ -19,7 +49,8 @@ def get_utc_filename(address)
 end
 
 def rpc_call(method, params = [])
-  uri = URI(ENV['ETH_RPC_URL'] || 'https://dry-wispy-gas.quiknode.pro')
+  uri = CONFIG[:quicknode_url]
+
   # pmc uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
 
   puts 'pmc - rpc_call: #{uri}'
@@ -31,7 +62,7 @@ end
 
 def rpc_call_eth(method, params = [])
   puts 'pmc - rpc_call_eth'
-  uri = URI('https://dry-wispy-gas.quiknode.pro')
+  uri = CONFIG[:quicknode_url]
   body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
   response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
   JSON.parse(response.body)['result']
