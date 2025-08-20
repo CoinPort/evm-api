@@ -21,7 +21,6 @@ def load_config
     chain_id: ENV['CHAIN_ID']&.to_i || config['chain_id'] || 1,
     gas_limit: ENV['GAS_LIMIT']&.to_i || config['gas_limit'] || 21000,
     min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
-    min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
   }
 
 
