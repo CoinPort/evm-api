@@ -26,6 +26,7 @@ post '/' do
   puts "JSON-RPC call: #{method} with params: #{params}"
   
   begin
+    puts "Processing method: #{method} with params: #{params.inspect}"
     result = handle_rpc_method(method, params)
     
     {
@@ -49,6 +50,7 @@ post '/' do
 end
 
 def handle_rpc_method(method, params)
+  puts "Handling RPC method: #{method} with params: #{params.inspect}"
   case method
   when 'personal_newAccount'
     password = params[0]

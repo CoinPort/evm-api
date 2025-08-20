@@ -1,0 +1,31 @@
+app@node-ethereum-1:~/evm-api$ docker logs coinport-eth-api7
+== Sinatra (v4.1.1) has taken the stage on 3000 for development with backup from Puma
+No config file found, using environment variables
+Using KEYSTORE_DIR: /app/keystores
+Using QuickNode URL: https://dry-wispy-gas.quiknode.pro/
+Using Chain ID: 1
+Using Gas Limit: 21000
+Using Min Gas Price:
+.
+Starting Ethereum API...
+Listening on port: 3000
+.
+Puma starting in single mode...
+* Puma version: 6.6.1 ("Return to Forever")
+* Ruby version: ruby 3.3.9 (2025-07-24 revision f5c772fc7c) [x86_64-linux]
+*  Min threads: 0
+*  Max threads: 5
+*  Environment: development
+*          PID: 1
+* Listening on http://0.0.0.0:3000
+Use Ctrl-C to stop
+JSON-RPC call: eth_call with params: [{"to"=>"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data"=>"0x70a0823100000000000000000000000093d360d49ef161f3f57176c0db54a75d14ba05d1"}, "latest"]
+RPC call: eth_call to https://dry-wispy-gas.quiknode.pro/
+10.0.0.4 - - [20/Aug/2025:12:38:22 +0000] "POST / HTTP/1.1" 200 102 0.2877
+JSON-RPC call: eth_call with params: [{"to"=>"0xdac17f958d2ee523a2206206994597c13d831ec7", "data"=>"0x70a0823100000000000000000000000093d360d49ef161f3f57176c0db54a75d14ba05d1"}, "latest"]
+RPC call: eth_call to https://dry-wispy-gas.quiknode.pro/
+10.0.0.4 - - [20/Aug/2025:12:38:22 +0000] "POST / HTTP/1.1" 200 102 0.2880
+JSON-RPC call: eth_call with params: [{"to"=>"0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e", "data"=>"0x70a0823100000000000000000000000093d360d49ef161f3f57176c0db54a75d14ba05d1"}, "latest"]
+RPC call: eth_call to https://dry-wispy-gas.quiknode.pro/
+10.0.0.4 - - [20/Aug/2025:12:38:22 +0000] "POST / HTTP/1.1" 200 102 0.2956
+JSON-RPC call: eth_call with params: [{"to"=>"0xe41d2489571d322189246dafa5ebde1f4699f498", "data"=>"0x70a0823100000000000000000000000093d360d49ef161f3f57176c0db54a75d14ba05d1"}, "latest"]
