@@ -12,13 +12,11 @@ set :port, ENV.fetch('PORT', 3000)
 puts "Listening on port: #{settings.port}"
 puts '.'
 
-#set :port, ENV.fetch('PORT', 8545)
-
 use Rack::JSONBodyParser
 
 post '/create_account' do
   password = params['password']
-  puts 'pmc - create_account'
+  puts 'REST - create_account'
   return [400, { error: 'Missing password' }.to_json] unless password
 
   begin
@@ -30,13 +28,9 @@ post '/create_account' do
 end
 
 post '/send_transaction' do
-  
-  puts 'pmc - /send_transaction'
+  puts 'REST - /send_transaction'
 
   address = params['address']
-
-  puts '/send_transaction address: #{address}'
-
   password = params['password']
   to = params['to']
   amount = params['value']

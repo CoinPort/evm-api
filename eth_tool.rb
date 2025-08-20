@@ -2,6 +2,9 @@ require 'eth'
 require 'fileutils'
 require 'json'
 require 'time'
+require 'yaml'
+require 'net/http'
+require 'uri'
 
 # Load configuration from YAML file or environment variables
 def load_config
@@ -22,7 +25,6 @@ def load_config
     gas_limit: ENV['GAS_LIMIT']&.to_i || config['gas_limit'] || 21000,
     min_gas_price: ENV['MIN_GAS_PRICE']&.to_i || config['min_gas_price'] || nil
   }
-
 end
 
 # Load configuration once at startup
@@ -38,24 +40,25 @@ puts "Using Chain ID: #{CONFIG[:chain_id]}"
 puts "Using Gas Limit: #{CONFIG[:gas_limit]}"
 puts "Using Min Gas Price: #{CONFIG[:min_gas_price]}"
 
-
 def get_utc_filename(address)
-  puts 'pmc - get_utc_filename'
   now = Time.now.utc
   iso = now.iso8601.gsub(':', '-')
   "UTC--#{iso}--#{address.downcase}"
 end
 
 def rpc_call(method, params = [])
-  uri = CONFIG[:quicknode_url]
-
-  # pmc uri = URI(ENV['ETH_RPC_URL'] || 'http://geth:8545')
-
-  puts 'pmc - rpc_call: #{uri}'
+  uri = URI(CONFIG[:quicknode_url])
+  puts "RPC call: #{method} to #{CONFIG[:quicknode_url]}"
 
   body = { jsonrpc: '2.0', method: method, params: params, id: 1 }.to_json
   response = Net::HTTP.post(uri, body, 'Content-Type' => 'application/json')
-  JSON.parse(response.body)['result']
+  result = JSON.parse(response.body)
+  
+  if result['error']
+    raise "RPC Error: #{result['error']['message']}"
+  end
+  
+  result['result']
 end
 
 def rpc_call_eth(method, params = [])
@@ -67,7 +70,7 @@ def rpc_call_eth(method, params = [])
 end
 
 def create_account(password)
-  puts 'pmc - create_account'
+  puts 'Creating account...'
   raise ArgumentError, "Password cannot be empty" if password.nil? || password.empty?
 
   key = Eth::Key.new
@@ -76,11 +79,13 @@ def create_account(password)
   filename = get_utc_filename(key.address.to_s)
   path = File.join(KEYSTORE_DIR, filename)
   File.write(path, keystore)
+  
+  puts "Created account: #{key.address}"
   key.address.to_s
 end
 
 def send_transaction(address, password, to, amount_eth)
-  puts 'pmc - send_transaction'
+  puts "Sending transaction from #{address} to #{to}, amount: #{amount_eth}"
   raise ArgumentError, "Invalid recipient address" unless to.match?(/^0x[a-fA-F0-9]{40}$/)
   raise ArgumentError, "Invalid amount" unless amount_eth.to_s.match?(/^\d+(\.\d+)?$/) && amount_eth.to_f > 0
 
@@ -98,19 +103,26 @@ def send_transaction(address, password, to, amount_eth)
 
   nonce = rpc_call_eth('eth_getTransactionCount', [key.address, 'pending']).to_i(16)
   gas_price = rpc_call_eth('eth_gasPrice').to_i(16)
+  
+  # Use minimum gas price from config if specified
+  if CONFIG[:min_gas_price] && gas_price < CONFIG[:min_gas_price]
+    gas_price = CONFIG[:min_gas_price]
+    puts "Using minimum gas price: #{gas_price}"
+  end
 
   tx = Eth::Tx.new(
     nonce: nonce,
     gas_price: gas_price,
-    gas_limit: 21_000,
+    gas_limit: CONFIG[:gas_limit],
     to: to,
-    value: Eth::Utils.to_wei(amount_eth.to_f)
+    value: Eth::Utils.to_wei(amount_eth.to_f),
+    chain_id: CONFIG[:chain_id]
   )
 
   begin
     tx.sign(key)
   rescue StandardError => e
-    puts "pmc - Failed to sign transaction: #{e.message}"
+    puts "Failed to sign transaction: #{e.message}"
     raise "Failed to sign transaction: #{e.message}"
   end
 
@@ -120,7 +132,7 @@ def send_transaction(address, password, to, amount_eth)
   unless tx_hash.is_a?(String) && tx_hash.match?(/^0x([A-Fa-f0-9]{64})$/)
     raise "Invalid transaction hash format: #{tx_hash.inspect}"
   end
-  puts "Transaction hash: #{tx_hash}"
 
+  puts "Transaction hash: #{tx_hash}"
   tx_hash
 end
