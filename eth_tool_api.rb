@@ -3,8 +3,12 @@ require 'rack/contrib'
 require_relative './eth_tool'
 
 set :bind, '0.0.0.0'
-# set :port, ENV.fetch('PORT', 3000)
-set :port, ENV.fetch('PORT', 8545)
+
+puts 'pmc - Starting Ethereum Tool API...'
+
+set :port, ENV.fetch('PORT', 3000)
+
+#set :port, ENV.fetch('PORT', 8545)
 
 use Rack::JSONBodyParser
 
