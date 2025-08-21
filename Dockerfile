@@ -17,9 +17,14 @@ ENV RACK_ENV=production
 RUN mkdir -p /opt/wallets && chmod 700 /opt/wallets
 
 # Create non-root user for security
-RUN addgroup -g 1000 app && \
-    adduser -u 1000 -G app -s /bin/sh -D app && \
-    chown -R appuser:app /app /opt/wallets
+# Alpine
+# RUN addgroup -g 1000 app && \
+#    adduser -u 1000 -G app -s /bin/sh -D app && \
+#    chown -R appuser:app /app /opt/wallets
+
+RUN groupadd -g 1000 app && \
+    useradd -u 1000 -g app -m app && \
+    chown -R app:app /app /opt/wallets
 
 # Switch to non-root user
 USER app
