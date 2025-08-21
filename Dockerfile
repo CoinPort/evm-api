@@ -1,19 +1,27 @@
-# Standard Ruby image (larger but more reliable)
-FROM ruby:3.3
+# Use Alpine for smaller base image
+FROM ruby:3.3-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install build dependencies and runtime dependencies in one layer
+RUN apk add --no-cache --virtual .build-deps \
+    build-base \
+    git \
+    openssl-dev \
+    libffi-dev \
+    && apk add --no-cache \
     curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Ruby gems
-RUN gem install --no-document \
+    tzdata \
+    openssl \
+    libffi \
+    && gem install --no-document \
     eth \
     rlp \
     sinatra \
     rackup \
     puma \
-    rack-contrib
+    rack-contrib \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /root/.gem
 
 WORKDIR /app
 
@@ -26,14 +34,15 @@ ENV KEYSTORE_DIR=/opt/wallets
 ENV PORT=3000
 ENV RACK_ENV=production
 
-# Create keystore directory
+# Create keystore directory with proper permissions
 RUN mkdir -p /opt/wallets && chmod 700 /opt/wallets
 
-# Create non-root user
-RUN groupadd -g 1000 appuser && \
-    useradd -u 1000 -g appuser -m appuser && \
+# Create non-root user for security
+RUN addgroup -g 1000 appuser && \
+    adduser -u 1000 -G appuser -s /bin/sh -D appuser && \
     chown -R appuser:appuser /app /opt/wallets
 
+# Switch to non-root user
 USER appuser
 
 EXPOSE 3000
