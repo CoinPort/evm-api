@@ -39,6 +39,7 @@ puts "Using QuickNode URL: #{CONFIG[:quicknode_url]}"
 puts "Using Chain ID: #{CONFIG[:chain_id]}"
 puts "Using Gas Limit: #{CONFIG[:gas_limit]}"
 puts "Using Min Gas Price: #{CONFIG[:min_gas_price]}"
+puts
 
 def get_utc_filename(address)
   now = Time.now.utc
@@ -47,6 +48,7 @@ def get_utc_filename(address)
 end
 
 def rpc_call(method, params = [])
+  puts
   uri = URI(CONFIG[:quicknode_url])
   puts "RPC call: #{method} to #{CONFIG[:quicknode_url]}"
 
@@ -66,6 +68,7 @@ def rpc_call_eth(method, params = [])
 end
 
 def create_account(password)
+  puts
   puts 'Creating account...'
   raise ArgumentError, "Password cannot be empty" if password.nil? || password.empty?
 
@@ -81,12 +84,13 @@ def create_account(password)
 end
 
 def send_transaction(address, password, to, amount_eth)
+  puts 
   puts "Sending transaction from #{address} to #{to}, amount: #{amount_eth}"
   raise ArgumentError, "Invalid recipient address" unless to.match?(/^0x[a-fA-F0-9]{40}$/)
   raise ArgumentError, "Invalid amount" unless amount_eth.to_s.match?(/^\d+(\.\d+)?$/) && amount_eth.to_f > 0
 
   filename = Dir.children(KEYSTORE_DIR).find { |f| f.end_with?(address.downcase) }
-  raise "Keystore not found for address #{address}" unless filename
+  raise "Keystore not found in #{KEYSTORE_DIR} for address #{address}" unless filename
 
   path = File.join(KEYSTORE_DIR, filename)
   json = File.read(path)

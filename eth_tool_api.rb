@@ -4,13 +4,13 @@ require_relative './eth_tool'
 
 set :bind, '0.0.0.0'
 
-puts '.'
+puts 
 puts 'Starting Ethereum API...'
 
 set :port, ENV.fetch('PORT', 3000)
 
 puts "Listening on port: #{settings.port}"
-puts '.'
+puts 
 
 use Rack::JSONBodyParser
 
