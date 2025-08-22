@@ -93,7 +93,10 @@ def send_transaction(address, password, to, amount_eth)
   raise "Keystore not found in #{KEYSTORE_DIR} for address #{address}" unless filename
 
   path = File.join(KEYSTORE_DIR, filename)
+  puts "Loading keystore from: #{path}"
   json = File.read(path)
+  puts "Keystore loaded successfully#{json.inspect}, password: #{password.inspect}"
+  puts
 
   begin
     key = Eth::Key::Decrypter.perform(json, password)
