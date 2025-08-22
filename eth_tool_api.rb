@@ -56,7 +56,7 @@ def handle_rpc_method(method, params)
     password = params[0]
     create_account(password)
     
-  when 'eth_sendTransaction'
+  when 'eth_sendTransaction', 'personal_sendTransaction'
     # Peatio sends transaction parameters
     tx_params = params[0]
     address = tx_params['from']
